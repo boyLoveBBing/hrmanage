@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.myth.hrmanage.dao.JobDao">
+
+    <resultMap type="com.myth.hrmanage.entity.Job" id="JobMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="deptId" column="dept_id" jdbcType="INTEGER"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="remark" column="remark" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="JobMap">
+        select id,
+               dept_id,
+               name,
+               remark
+        from job
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="JobMap">
+        select
+        id, dept_id, name, remark
+        from job
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="deptId != null">
+                and dept_id = #{deptId}
+            </if>
+            <if test="name != null and name != ''">
+                and name = #{name}
+            </if>
+            <if test="remark != null and remark != ''">
+                and remark = #{remark}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from job
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="deptId != null">
+                and dept_id = #{deptId}
+            </if>
+            <if test="name != null and name != ''">
+                and name = #{name}
+            </if>
+            <if test="remark != null and remark != ''">
+                and remark = #{remark}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into job(dept_id, name, remark)
+        values (#{deptId}, #{name}, #{remark})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into job(dept_id, name, remark)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.deptId}, #{entity.name}, #{entity.remark})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into job(dept_id, name, remark)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.deptId}, #{entity.name}, #{entity.remark})
+        </foreach>
+        on duplicate key update
+        dept_id = values(dept_id),
+        name = values(name),
+        remark = values(remark)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update job
+        <set>
+            <if test="deptId != null">
+                dept_id = #{deptId},
+            </if>
+            <if test="name != null and name != ''">
+                name = #{name},
+            </if>
+            <if test="remark != null and remark != ''">
+                remark = #{remark},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete
+        from job
+        where id = #{id}
+    </delete>
+
+</mapper>
+

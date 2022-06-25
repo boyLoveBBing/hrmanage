@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+
+    <link rel="shortcut icon" href="/public/logo.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="/public/css/font.css">
+    <link rel="stylesheet" href="/public/css/xadmin.css">
+    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+    <script type="text/javascript" src="/public/lib/layui/layui.js" charset="utf-8"></script>
+    <script type="text/javascript" src="/public/js/xadmin.js"></script>
+</head>
+<body>
+<div class="x-nav">
+      <span class="layui-breadcrumb">
+        <a href="">首页</a>
+        <a>
+          <cite>文档信息</cite></a>
+      </span>
+    <a href="/document/add">
+        <button class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:innert;margin-left:75%;;"
+                lay-submit="" lay-filter="sreach"><i class="layui-icon"></i>增加</button>
+    </a>
+
+    <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right"
+       th:href="@{'/document/list?pageNum='+${pageInfo.pageNum}+'&pageSize=6'}" title="刷新">
+        <i class="layui-icon" style="line-height:30px">ဂ</i></a>
+</div>
+<div class="x-body">
+    <div class="layui-row" style="" align="center">
+        <form class="layui-form layui-col-md12 x-so" method="get" action="/document/list">
+            <!-- <input class="layui-input" placeholder="开始日" name="start" id="start">
+            <input class="layui-input" placeholder="截止日" name="end" id="end"> -->
+            <input type="text" name="content" style="width:50%;"  placeholder="请输入查找内容" autocomplete="off" class="layui-input">
+            <input type="hidden" name="pageNum" value="1"/>
+            <input type="hidden" name="pageSize" value="6"/>
+            <button class="layui-btn"  lay-submit="" lay-filter="sreach"><i class="layui-icon">&#xe615;</i></button>
+        </form>
+    </div>
+
+    <table class="layui-table">
+        <thead>
+        <tr>
+            <th>
+                <div class="layui-unselect header layui-form-checkbox" lay-skin="primary"><i class="layui-icon">&#xe605;</i></div>
+            </th>
+            <th>ID</th>
+            <th>标题</th>
+            <th>描述</th>
+            <th>发布日期</th>
+            <th>发布用户</th>
+            <th>操作</th>
+        </thead>
+        <tbody>
+        <th:block th:if="${documents != null}">
+            <tr th:each="document : ${documents}">
+                <td>
+                    <div class="layui-unselect layui-form-checkbox" lay-skin="primary" data-id='2'><i class="layui-icon">&#xe605;</i></div>
+                </td>
+                <td th:text="${document.id}" class="documentId">ddd</td>
+                <td th:text="${document.title }"></td>
+                <td th:text="${document.remark}"></td>
+                <td th:text="${document.createDate}"></td>
+                <td th:text="${document.userName}"></td>
+                <td class="td-manage">
+                    <a title="编辑"  th:href="@{'/document/add?id='+${document.id }}">
+                        <i class="layui-icon">&#xe642;</i>
+                    </a>
+                    <a title="删除" th:onclick="'member_del('+${document.id}+')'" href="javascript:;">
+                        <i class="layui-icon">&#xe640;</i>
+                    </a>
+                </td>
+            </tr>
+        </th:block>
+
+        </tbody>
+    </table>
+    <div class="page">
+        <div th:if="${pageInfo!=null && pageInfo.pageNum!=null}">
+
+            <a class="prev" href="javascript:;">&lt;&lt;</a>
+            <a th:if="${pageInfo.pageNum - 1 != 0 }" class="num"
+               th:href="@{'/document/list?pageNum='+${pageInfo.pageNum - 1}+'&pageSize=6'}"
+               th:text="${pageInfo.pageNum - 1}"></a>
+
+            <span class="current" th:text="${pageInfo.pageNum}"></span>
+
+            <a th:if="${pageInfo.pageNum + 1 <= pageInfo.pages }" class="num"
+               th:href="@{'/document/list?pageNum='+${pageInfo.pageNum + 1}+'&pageSize=6'}"
+               th:text="${pageInfo.pageNum + 1}"></a>
+            <a class="next" href="javascript:;">&gt;&gt;</a>
+        </div>
+    </div>
+
+</div>
+<script>
+    layui.use('laydate', function(){
+        var laydate = layui.laydate;
+
+        //执行一个laydate实例
+        laydate.render({
+            elem: '#start' //指定元素
+        });
+
+        //执行一个laydate实例
+        laydate.render({
+            elem: '#end' //指定元素
+        });
+    });
+
+    /*用户-停用*/
+    function member_stop(obj,id){
+        layer.confirm('确认要停用吗？',function(index){
+
+            if($(obj).attr('title')=='启用'){
+
+                //发异步把用户状态进行更改
+                $(obj).attr('title','停用')
+                $(obj).find('i').html('&#xe62f;');
+
+                $(obj).parents("tr").find(".td-status").find('span').addClass('layui-btn-disabled').html('已停用');
+                layer.msg('已停用!',{icon: 5,time:1000});
+
+            }else{
+                $(obj).attr('title','启用')
+                $(obj).find('i').html('&#xe601;');
+
+                $(obj).parents("tr").find(".td-status").find('span').removeClass('layui-btn-disabled').html('已启用');
+                layer.msg('已启用!',{icon: 5,time:1000});
+            }
+
+        });
+    }
+
+    /*用户-删除*/
+    function member_del(documentId){
+        $.ajax({
+            url:"/document/"+documentId,
+            type:"delete",
+            success:function (){
+                window.location.reload();
+            }
+        })
+    }
+
+
+
+    function delAll (argument) {
+
+        var data = tableCheck.getData();
+
+        layer.confirm('确认要删除吗？'+data,function(index){
+            //捉到所有被选中的，发异步进行删除
+            layer.msg('删除成功', {icon: 1});
+            $(".layui-form-checked").not('.header').parents('tr').remove();
+        });
+    }
+</script>
+<script>var _hmt = _hmt || []; (function() {
+    var hm = document.createElement("script");
+    hm.src = "https://hm.baidu.com/hm.js?b393d153aeb26b46e9431fabaf0f6190";
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(hm, s);
+})();</script>
+</body>
+</html>

@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.myth.hrmanage.dao.RecruitDao">
+
+    <resultMap type="com.myth.hrmanage.entity.Recruit" id="RecruitMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="deptId" column="dept_id" jdbcType="INTEGER"/>
+        <result property="jobId" column="job_id" jdbcType="INTEGER"/>
+        <result property="personNum" column="person_num" jdbcType="INTEGER"/>
+        <result property="remark" column="remark" jdbcType="VARCHAR"/>
+        <result property="status" column="status" jdbcType="VARCHAR"/>
+        <result property="createDate" column="create_date" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="RecruitMap">
+        select id,
+               dept_id,
+               job_id,
+               person_num,
+               remark,
+               status,
+               create_date
+        from recruit
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="RecruitMap">
+        select
+        id, dept_id, job_id, person_num, remark, status, create_date
+        from recruit
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="deptId != null">
+                and dept_id = #{deptId}
+            </if>
+            <if test="jobId != null">
+                and job_id = #{jobId}
+            </if>
+            <if test="personNum != null">
+                and person_num = #{personNum}
+            </if>
+            <if test="remark != null and remark != ''">
+                and remark = #{remark}
+            </if>
+            <if test="status != null and status != ''">
+                and status = #{status}
+            </if>
+            <if test="createDate != null">
+                and create_date = #{createDate}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from recruit
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="deptId != null">
+                and dept_id = #{deptId}
+            </if>
+            <if test="jobId != null">
+                and job_id = #{jobId}
+            </if>
+            <if test="personNum != null">
+                and person_num = #{personNum}
+            </if>
+            <if test="remark != null and remark != ''">
+                and remark = #{remark}
+            </if>
+            <if test="status != null and status != ''">
+                and status = #{status}
+            </if>
+            <if test="createDate != null">
+                and create_date = #{createDate}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into recruit(dept_id, job_id, person_num, remark, status, create_date)
+        values (#{deptId}, #{jobId}, #{personNum}, #{remark}, #{status}, #{createDate})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into recruit(dept_id, job_id, person_num, remark, status, create_date)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.deptId}, #{entity.jobId}, #{entity.personNum}, #{entity.remark}, #{entity.status},
+            #{entity.createDate})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into recruit(dept_id, job_id, person_num, remark, status, create_date)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.deptId}, #{entity.jobId}, #{entity.personNum}, #{entity.remark}, #{entity.status},
+            #{entity.createDate})
+        </foreach>
+        on duplicate key update
+        dept_id = values(dept_id),
+        job_id = values(job_id),
+        person_num = values(person_num),
+        remark = values(remark),
+        status = values(status),
+        create_date = values(create_date)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update recruit
+        <set>
+            <if test="deptId != null">
+                dept_id = #{deptId},
+            </if>
+            <if test="jobId != null">
+                job_id = #{jobId},
+            </if>
+            <if test="personNum != null">
+                person_num = #{personNum},
+            </if>
+            <if test="remark != null and remark != ''">
+                remark = #{remark},
+            </if>
+            <if test="status != null and status != ''">
+                status = #{status},
+            </if>
+            <if test="createDate != null">
+                create_date = #{createDate},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete
+        from recruit
+        where id = #{id}
+    </delete>
+
+</mapper>
+

@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.myth.hrmanage.dao.EmployeeDao">
+
+    <resultMap type="com.myth.hrmanage.entity.Employee" id="EmployeeMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="deptId" column="dept_id" jdbcType="INTEGER"/>
+        <result property="jobId" column="job_id" jdbcType="INTEGER"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="cardId" column="card_id" jdbcType="VARCHAR"/>
+        <result property="cardid" column="cardId" jdbcType="VARCHAR"/>
+        <result property="address" column="address" jdbcType="VARCHAR"/>
+        <result property="phone" column="phone" jdbcType="VARCHAR"/>
+        <result property="email" column="email" jdbcType="VARCHAR"/>
+        <result property="sex" column="sex" jdbcType="VARCHAR"/>
+        <result property="party" column="party" jdbcType="VARCHAR"/>
+        <result property="education" column="education" jdbcType="VARCHAR"/>
+        <result property="remark" column="remark" jdbcType="VARCHAR"/>
+        <result property="createdate" column="createDate" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="EmployeeMap">
+        select id,
+               dept_id,
+               job_id,
+               name,
+               card_id,
+               cardId,
+               address,
+               phone,
+               email,
+               sex,
+               party,
+               education,
+               remark,
+               createDate
+        from employee
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="EmployeeMap">
+        select
+        id, dept_id, job_id, name, card_id, cardId, address, phone, email, sex, party, education, remark, createDate
+        from employee
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="deptId != null">
+                and dept_id = #{deptId}
+            </if>
+            <if test="jobId != null">
+                and job_id = #{jobId}
+            </if>
+            <if test="name != null and name != ''">
+                and name = #{name}
+            </if>
+            <if test="cardId != null and cardId != ''">
+                and card_id = #{cardId}
+            </if>
+            <if test="cardid != null and cardid != ''">
+                and cardId = #{cardid}
+            </if>
+            <if test="address != null and address != ''">
+                and address = #{address}
+            </if>
+            <if test="phone != null and phone != ''">
+                and phone = #{phone}
+            </if>
+            <if test="email != null and email != ''">
+                and email = #{email}
+            </if>
+            <if test="sex != null and sex != ''">
+                and sex = #{sex}
+            </if>
+            <if test="party != null and party != ''">
+                and party = #{party}
+            </if>
+            <if test="education != null and education != ''">
+                and education = #{education}
+            </if>
+            <if test="remark != null and remark != ''">
+                and remark = #{remark}
+            </if>
+            <if test="createdate != null and createdate != ''">
+                and createDate = #{createdate}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from employee
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="deptId != null">
+                and dept_id = #{deptId}
+            </if>
+            <if test="jobId != null">
+                and job_id = #{jobId}
+            </if>
+            <if test="name != null and name != ''">
+                and name = #{name}
+            </if>
+            <if test="cardId != null and cardId != ''">
+                and card_id = #{cardId}
+            </if>
+            <if test="cardid != null and cardid != ''">
+                and cardId = #{cardid}
+            </if>
+            <if test="address != null and address != ''">
+                and address = #{address}
+            </if>
+            <if test="phone != null and phone != ''">
+                and phone = #{phone}
+            </if>
+            <if test="email != null and email != ''">
+                and email = #{email}
+            </if>
+            <if test="sex != null and sex != ''">
+                and sex = #{sex}
+            </if>
+            <if test="party != null and party != ''">
+                and party = #{party}
+            </if>
+            <if test="education != null and education != ''">
+                and education = #{education}
+            </if>
+            <if test="remark != null and remark != ''">
+                and remark = #{remark}
+            </if>
+            <if test="createdate != null and createdate != ''">
+                and createDate = #{createdate}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into employee(dept_id, job_id, name, card_id, cardId, address, phone, email, sex, party, education,
+                             remark, createDate)
+        values (#{deptId}, #{jobId}, #{name}, #{cardId}, #{cardid}, #{address}, #{phone}, #{email}, #{sex}, #{party},
+                #{education}, #{remark}, #{createdate})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into employee(dept_id, job_id, name, card_id, cardId, address, phone, email, sex, party, education,
+        remark, createDate)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.deptId}, #{entity.jobId}, #{entity.name}, #{entity.cardId}, #{entity.cardid}, #{entity.address},
+            #{entity.phone}, #{entity.email}, #{entity.sex}, #{entity.party}, #{entity.education}, #{entity.remark},
+            #{entity.createdate})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into employee(dept_id, job_id, name, card_id, cardId, address, phone, email, sex, party, education,
+        remark, createDate)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.deptId}, #{entity.jobId}, #{entity.name}, #{entity.cardId}, #{entity.cardid}, #{entity.address},
+            #{entity.phone}, #{entity.email}, #{entity.sex}, #{entity.party}, #{entity.education}, #{entity.remark},
+            #{entity.createdate})
+        </foreach>
+        on duplicate key update
+        dept_id = values(dept_id),
+        job_id = values(job_id),
+        name = values(name),
+        card_id = values(card_id),
+        cardId = values(cardId),
+        address = values(address),
+        phone = values(phone),
+        email = values(email),
+        sex = values(sex),
+        party = values(party),
+        education = values(education),
+        remark = values(remark),
+        createDate = values(createDate)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update employee
+        <set>
+            <if test="deptId != null">
+                dept_id = #{deptId},
+            </if>
+            <if test="jobId != null">
+                job_id = #{jobId},
+            </if>
+            <if test="name != null and name != ''">
+                name = #{name},
+            </if>
+            <if test="cardId != null and cardId != ''">
+                card_id = #{cardId},
+            </if>
+            <if test="cardid != null and cardid != ''">
+                cardId = #{cardid},
+            </if>
+            <if test="address != null and address != ''">
+                address = #{address},
+            </if>
+            <if test="phone != null and phone != ''">
+                phone = #{phone},
+            </if>
+            <if test="email != null and email != ''">
+                email = #{email},
+            </if>
+            <if test="sex != null and sex != ''">
+                sex = #{sex},
+            </if>
+            <if test="party != null and party != ''">
+                party = #{party},
+            </if>
+            <if test="education != null and education != ''">
+                education = #{education},
+            </if>
+            <if test="remark != null and remark != ''">
+                remark = #{remark},
+            </if>
+            <if test="createdate != null and createdate != ''">
+                createDate = #{createdate},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete
+        from employee
+        where id = #{id}
+    </delete>
+
+</mapper>
+

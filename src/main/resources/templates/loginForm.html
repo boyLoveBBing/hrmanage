@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>登录</title>
+    
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="public/css/font.css">
+    <link rel="stylesheet" href="public/css/xadmin.css">
+    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+    <script src="public/lib/layui/layui.js" charset="utf-8"></script>
+    <script type="text/javascript" src="public/js/xadmin.js"></script>
+</head>
+<body class="login-bg">
+
+<div class="login layui-anim layui-anim-up">
+    <div class="message">人事管理系统登录</div>
+    <div id="darkbannerwrap"></div>
+    <th:block th:if="${message != null}">
+        <div th:text="${message}" style="color: red"> </div>
+        <hr class="hr15">
+    </th:block>
+    <form method="post" class="layui-form" action="/login" id="loginTo">
+        <input name="loginname" placeholder="用户名" type="text" lay-verify="required" class="layui-input" >
+        <hr class="hr15">
+        <input name="password" lay-verify="required" placeholder="密码"  type="password" class="layui-input">
+        <hr class="hr15">
+        <input value="登录" lay-submit lay-filter="login" style="width:100%;" type="submit">
+        <hr class="hr20" >
+
+    </form>
+</div>
+</body>
+</html>
